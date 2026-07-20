@@ -4,28 +4,90 @@ on:
   push:
     branches: [main]
 
+
 jobs:
-  npm-audit:
+
+  security-scan:
+
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+
+
+      # Node Setup
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 24
+
+
 
       - name: Check Versions
         run: |
           node -v
           npm -v
 
+
+
+      # Install Dependencies
       - name: Install Dependencies
         run: npm ci
 
+
+
+      # Dependency Scan
       - name: Run npm Audit
         run: npm audit
+
+
+
+      # SAST
       - name: Run Semgrep
         uses: semgrep/semgrep-action@v1
         with:
           config: auto
+
+
+
+      # Secrets Detection
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+
+
+
+      # Filesystem Vulnerability Scan
+      - name: Run Trivy FS Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          severity: HIGH,CRITICAL
+
+
+
+      # Terraform Security Scan
+      - name: Run Checkov Terraform Scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: terraform
+          framework: terraform
+
+
+
+      # Start Express App
+      - name: Start Application
+        run: |
+          npm start &
+          sleep 15
+
+
+
+      # DAST
+      - name: Run OWASP ZAP
+        uses: zaproxy/action-baseline@v0.10.0
+        with:
+          target: http://localhost:3000

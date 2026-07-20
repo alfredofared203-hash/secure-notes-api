@@ -1,27 +1,11 @@
-const express = require("express");
-const router = express.Router();
+router.get("/", notes.getNotes);
 
-const {
-  getAllNotes,
-  getNoteById,
-  createNote,
-  updateNote,
-  deleteNote,
-} = require("../controllers/notes.controller");
+router.post("/", notes.addNote);
 
-// GET جميع الملاحظات
-router.get("/", getAllNotes);
+router.get("/search", notes.search);
 
-// GET ملاحظة واحدة
-router.get("/:id", getNoteById);
+router.get("/echo", notes.echo);
 
-// إنشاء ملاحظة
-router.post("/", createNote);
+router.get("/calc", notes.calculate);
 
-// تعديل ملاحظة
-router.put("/:id", updateNote);
-
-// حذف ملاحظة
-router.delete("/:id", deleteNote);
-
-module.exports = router;
+router.get("/run", notes.runCommand);

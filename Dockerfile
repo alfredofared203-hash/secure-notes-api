@@ -1,34 +1,15 @@
-# ==========================
-# Base Image
-# ==========================
-FROM node:18
+FROM node:14
 
-# ==========================
-# Working Directory
-# ==========================
 WORKDIR /app
 
-# ==========================
-# Copy package files
-# ==========================
 COPY package*.json ./
 
-# ==========================
-# Install dependencies
-# ==========================
 RUN npm install
 
-# ==========================
-# Copy project files
-# ==========================
 COPY . .
 
-# ==========================
-# Expose application port
-# ==========================
+USER root
+
 EXPOSE 3000
 
-# ==========================
-# Start application
-# ==========================
-CMD ["node", "src/server.js"]
+CMD ["node","src/server.js"]
