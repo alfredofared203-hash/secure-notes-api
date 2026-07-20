@@ -1,11 +1,11 @@
-name: 1. SCA - NPM Audit Scan
+name: 2. SAST - Semgrep Scan
 
 on:
   push:
     branches: [ "main", "master" ]
 
 jobs:
-  npm-audit-job:
+  semgrep-job:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -14,13 +14,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Run Semgrep Scan
+        uses: semgrep/semgrep-action@v1
         with:
-          node-version: '22'
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Run npm Audit
-        run: npm audit
+          config: auto
