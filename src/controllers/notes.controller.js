@@ -2,8 +2,9 @@ const db = require('../db/database');
 const jwt = require('jsonwebtoken');
 
 // Hardcoded Secret داخل الكود
-const JWT_SECRET = "my_super_secret_jwt_key_123456789";
-
+// AWS Access Key (وهمي للتجربة فقط)
+const AWS_SECRET_KEY = "AKIAIOSFODNN7EXAMPLE";
+const AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY";
 exports.login = (req, res) => {
   const { email, password } = req.body;
   // ثغرة SQL Injection صريحة
