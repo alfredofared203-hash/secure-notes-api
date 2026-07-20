@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  secure-notes-api:
+    build: .
+    container_name: secure-notes-api
+
+    ports:
+      - "3000:3000"
+
+    env_file:
+      - .env
