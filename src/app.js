@@ -1,14 +1,10 @@
-const express = require("express");
-const notesRoutes = require("./routes/notes");
+const express = require('express');
+const routes = require('./routes/notes');
 
 const app = express();
-
 app.use(express.json());
 
-app.use("/notes", notesRoutes);
-
-app.get("/", (req, res) => {
-  res.send("Secure Notes API");
-});
+// لا توجد Security Headers (Helmet) ولا Rate Limiter
+app.use('/api', routes);
 
 module.exports = app;

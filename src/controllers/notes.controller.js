@@ -1,99 +1,27 @@
-const db = require("../db/database");
-const { exec } = require("child_process");
+const db = require('../db/database');
+const jwt = require('jsonwebtoken');
 
-// ==========================
-// Get All Notes
-// ==========================
+// Hardcoded Secret داخل الكود
+const JWT_SECRET = "my_super_secret_jwt_key_123456789";
+
+exports.login = (req, res) => {
+  const { email, password } = req.body;
+  // ثغرة SQL Injection صريحة
+  const query = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
+
+  db.get(query, (err, user) => {
+    if (err) return res.status(500).send(err.message);
+    if (!user) return res.status(401).send("Invalid credentials");
+
+    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
+    res.json({ token });
+  });
+};
+
 exports.getNotes = (req, res) => {
+  // بدون إمكانية التحقق من auth
   db.all("SELECT * FROM notes", [], (err, rows) => {
-    if (err) {
-      return res.status(500).json({
-        error: err.message,
-      });
-    }
-
-    res.json({
-      success: true,
-      data: rows,
-    });
-  });
-};
-
-// ==========================
-// Add Note
-// ==========================
-exports.addNote = (req, res) => {
-  const { title, content } = req.body;
-
-  db.run(
-    "INSERT INTO notes(title,content) VALUES(?,?)",
-    [title, content],
-    function (err) {
-      if (err) {
-        return res.status(500).json({
-          error: err.message,
-        });
-      }
-
-      res.json({
-        success: true,
-        id: this.lastID,
-      });
-    }
-  );
-};
-
-// ===================================================
-// ❌ SQL Injection Demo (لـ OWASP ZAP)
-// ===================================================
-exports.search = (req, res) => {
-  const title = req.query.title;
-
-  const sql =
-    "SELECT * FROM notes WHERE title = '" +
-    title +
-    "'";
-
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      return res.status(500).send(err.message);
-    }
-
+    if (err) return res.status(500).send(err.message);
     res.json(rows);
-  });
-};
-
-// ===================================================
-// ❌ Reflected XSS Demo (لـ ZAP)
-// ===================================================
-exports.echo = (req, res) => {
-  res.send(req.query.message);
-};
-
-// ===================================================
-// ❌ Dangerous eval() (لـ Semgrep)
-// ===================================================
-exports.calculate = (req, res) => {
-  const expression = req.query.expression;
-
-  const result = eval(expression);
-
-  res.json({
-    result,
-  });
-};
-
-// ===================================================
-// ❌ Command Injection Demo (لـ Semgrep)
-// ===================================================
-exports.runCommand = (req, res) => {
-  const cmd = req.query.cmd;
-
-  exec(cmd, (err, stdout, stderr) => {
-    if (err) {
-      return res.status(500).send(stderr);
-    }
-
-    res.send(stdout);
   });
 };

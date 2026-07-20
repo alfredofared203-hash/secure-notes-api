@@ -1,19 +1,14 @@
-provider "aws" {
-  region = "us-east-1"
+# إعداداتterraform غير آمنة تكشفها أداة Checkov
+resource "aws_s3_bucket" "vulnerable_bucket" {
+  bucket = "my-sec-notes-bucket-12345"
 }
 
-resource "aws_security_group" "bad" {
-  name = "bad-security-group"
+resource "aws_s3_bucket_public_access_block" "public_access" {
+  bucket = aws_s3_bucket.vulnerable_bucket.id
 
-  ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_s3_bucket" "bad_bucket" {
-  bucket = "devsecops-demo-bucket-123456"
+  # خطأ أمني: السماح بالوصول العام
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }

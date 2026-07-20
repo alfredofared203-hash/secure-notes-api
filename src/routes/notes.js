@@ -1,11 +1,8 @@
-router.get("/", notes.getNotes);
+const express = require('express');
+const router = express.Router();
+const controller = require('../controllers/notes.controller');
 
-router.post("/", notes.addNote);
+router.post('/login', controller.login);
+router.get('/notes', controller.getNotes);
 
-router.get("/search", notes.search);
-
-router.get("/echo", notes.echo);
-
-router.get("/calc", notes.calculate);
-
-router.get("/run", notes.runCommand);
+module.exports = router;

@@ -1,13 +1,6 @@
-const express = require("express");
+const app = require('./app');
+const PORT = process.env.PORT || 3000;
 
-const app = express();
-
-app.use(express.json());
-
-app.get("/", (req,res)=>{
-    res.send("Secure Notes API");
-});
-
-app.listen(3000,()=>{
-    console.log("Server running");
+app.listen(PORT, () => {
+  console.log(`Vulnerable App running on port ${PORT}`);
 });
