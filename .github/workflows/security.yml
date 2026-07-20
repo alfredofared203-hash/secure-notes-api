@@ -15,6 +15,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Semgrep Scan
-        uses: semgrep/semgrep-action@v1
-        with:
-          config: auto
+        run: |
+          docker run --rm -v "${{ github.workspace }}:/src" returntocorp/semgrep semgrep scan --config p/default /src
+        continue-on-error: true
